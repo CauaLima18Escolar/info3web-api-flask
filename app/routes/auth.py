@@ -2,7 +2,6 @@ from flask import request, Blueprint, jsonify
 from ..models import Usuario
 from ..config.db import db
 
-
 authBP = Blueprint("auth", __name__, url_prefix="/auth")
 
 @authBP.route("/login", methods=["POST"])
@@ -13,12 +12,12 @@ def login():
     usuarioLogado = db.session.query(Usuario).filter_by(matricula=matricula).first()
 
     if not usuarioLogado:
-        return "Usuário inexistente"
+        return jsonify({ "error": "Usuário inexistente" }), 404
 
-    if not usuarioLogado.senha == senha:
-        return "Senha incorreta"
+    if not usuarioLogado.check_password(senha):
+        return jsonify({ "error": "Senha incorreta" }), 400
 
-    return jsonify(usuarioLogado.to_dict())
+    return jsonify(usuarioLogado.to_dict()), 200
     
 
 @authBP.route("/registro", methods=["POST"])
@@ -27,10 +26,10 @@ def registro():
 
     valid = Usuario.validateData(data)
     if valid == False:
-        return "Preencha os campos"
+        return jsonify({ "error": "Preencha os campos obrigatórios" }), 400
 
     novoUsuario = Usuario(data)
     db.session.add(novoUsuario)
     db.session.commit()
 
-    return "Usuário cadastrado"
+    return jsonify({ "message": "Usuário cadastrado com sucesso. Aguarde a resposta de um admin (líder de sala)" }), 200

@@ -10,10 +10,19 @@ class Usuario(db.Model):
     matricula = db.Column(db.String(14), nullable=False, unique=True)
 
     def __init__(self, data):
+        from app import bcrypt
         self.nome = data.get("nome")
         self.email = data.get("email")
-        self.senha = data.get("senha")
-        self.matricula = data.get("matricula") 
+        self.senha = bcrypt.generate_password_hash(data.get("senha"), 10)
+        self.matricula = data.get("matricula")
+
+    def set_password(self, senha):
+        from app import bcrypt
+        self.senha = bcrypt.generate_password_hash(senha, 10)
+    
+    def check_password(self, senha):
+        from app import bcrypt
+        return bcrypt.check_password_hash(self.senha, senha)
 
     def to_dict(self):
         return {

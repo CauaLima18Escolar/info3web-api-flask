@@ -1,6 +1,6 @@
 from app import createApp
 
-app = createApp() 
+app = createApp()
 
 @app.route("/")
 def index():
