@@ -1,4 +1,5 @@
 from flask import request, Blueprint, jsonify
+from flask_jwt_extended import create_access_token, jwt_required
 from ..models import Usuario
 from ..config.db import db
 
@@ -17,9 +18,11 @@ def login():
     if not usuarioLogado.check_password(senha):
         return jsonify({ "error": "Senha incorreta" }), 400
 
-    return jsonify(usuarioLogado.to_dict()), 200
+    return jsonify({ 
+        "usuario": usuarioLogado.to_dict(), 
+        "token": create_access_token(usuarioLogado.id) 
+    }), 200
     
-
 @authBP.route("/registro", methods=["POST"])
 def registro():
     data = request.get_json()

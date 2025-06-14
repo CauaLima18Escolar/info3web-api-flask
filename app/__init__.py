@@ -1,13 +1,14 @@
-from flask import Flask 
-from flask_bcrypt import Bcrypt
+from flask import Flask
+from dotenv import load_dotenv
+from .config.extensions import init_extensions
 from .config.db import db, create_db  
 from .routes import register_routes
 
-bcrypt = Bcrypt()
+load_dotenv()
 
 def createApp() :
     app = Flask(__name__)
-    bcrypt.init_app(app)
+    init_extensions(app)
     register_routes(app)
     create_db(app)
 
