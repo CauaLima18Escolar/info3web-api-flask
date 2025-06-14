@@ -10,5 +10,5 @@ def init_extensions(app):
   bcrypt.init_app(app)
 
   app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET")
-  app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=20)
+  app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=2)
   jwt.init_app(app)
